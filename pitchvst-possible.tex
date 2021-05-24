@@ -1,0 +1,88 @@
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{titling}
+\usepackage{amssymb}
+\usepackage[skip=0.25em]{parskip}
+\usepackage{amsthm}
+
+\newtheorem{thm}{Theorem}
+\renewcommand\qedsymbol{Amen.}
+
+\setlength\droptitle{-5em}
+
+\title{On the Possibility of Mapping the Samples to the Pitches}
+\author{Varik Valefor}
+\begin{document}
+	\maketitle
+	\section{Executive Summary}
+		There exists a morphism $f$ such that for all sequences $n$ of a set size, $f(n)$ equals the loudest pitch of $n$.
+	\section{Definitions}
+		Let $S$ denote the set of all samples.
+
+		Let $C$ equal $\bigcup_{x=1}^\infty \mathbb C^x$.
+
+		Let $P$ denote the set of all frequencies/pitches.
+
+		Let $w$ denote the window size.
+
+		Let $\mathbb S$ denote the class of all sets.
+
+		Let $F$ denote the set of all morphisms.
+
+		Let $\Omega$ denote the universal set.
+
+		For all subsets of $\Omega$ $A$ and $B$, for all $f \in F$, let $g(f,\ A,\ B)$ iff $d(f) = A$ and $r(f) = B$.
+	\section{``Proper'' Morphisms}
+		\[
+			\mathrm{fft} \colon S^w \mapsto \mathbb C^w.
+		\]
+		For all $s \in S^w$, $\mathrm{fft}(s)$ equals the output of the FOURIER transform on $s$.
+		\[
+			\mathrm{pitch} \colon C \mapsto \mathbb P.
+		\]
+		For all $j \in C$, $\mathrm{pitch}(j)$ equals the loudest pitch/frequency of the FOURIER transform output $j$.
+		\[
+			d : F \mapsto \mathbb S.
+		\]
+		For all $f \in F$, $d(f)$ equals the domain of $f$.
+		\[
+			r : F \mapsto \mathbb S.
+		\]
+		For all $f \in F$, $r(f)$ equals the range of $f$.
+	\section{In the Pudding}
+		\begin{thm}
+			$\exists f \in F \colon g(f,\ S^w,\ P)$.
+		\end{thm}
+		\begin{proof}
+			\[
+				\forall K \in F^2,\ 
+				r(K_1) \subseteq d(K_2) \implies
+				\exists f \in F \colon g\big(f,\ d(K_1),\ r(K_2)\big).
+			\]
+			\[
+				\forall A \in \Omega,\ 
+				A_1 = A_2 = A_3 \implies
+				A_1 = A_3.
+			\]
+			\[
+				d(\mathrm{fft}) = S^w.
+			\]
+			\[
+				r(\mathrm{fft}) = \mathbb C^w.
+			\]
+			\[
+				d(\mathrm{pitch}) = C.
+			\]
+			\[
+				r(\mathrm{pitch}) = P.
+			\]
+			\[
+				\mathbb C^w \subset C.
+			\]
+			\[
+				\therefore \exists f \in F \colon g(f,\ S^w,\ P).\qedhere
+			\]
+		\end{proof}
+\end{document}
