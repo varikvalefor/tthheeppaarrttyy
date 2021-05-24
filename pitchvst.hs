@@ -1,30 +1,53 @@
+import qualified Data.List as DL;
+import qualified Data.Function as DF;
+import qualified Numeric.FFT as FT;
+import Data.Complex;
+
+------------------------------------------------------------------------
+
 windowSize :: Int;
-windowSize = 65535;
+windowSize = 65536;
 
 ------------------------------------------------------------------------
 
 type Giraffe = [(Int, Pitch)];
 type Pitch = Double;
 type Sample = Double;
+type Frequency = Double;
+type Multiplier = Double;
+type FFTOutput = [Complex Double];
+data WaveType = Sin | Cos;
 
 ------------------------------------------------------------------------
 
+fft :: [Sample] -> FFTOutput;
+fft = FT.fft . map cis;
+
+fftToPitch :: FFTOutput -> Pitch;
+fftToPitch k = 0;
+{- For all FFT outputs k, fftToPitch equals the loudest pitch of k. -}
+{- Implementing fftToPitch is left as an exercise for the reader.
+ - Shut up and hack! -}
+
+readMicData :: IO [Sample];
+readMicData = return $ map (\a -> a * (sin a)) [1.0,1.1..];
+{- readMicData is a stream of microphone samples. -}
+{- Implementing readMicData is left as an exercise for the reader. 
+ - The author recommends using the SDL library or an operating system-
+ - specific approach. -}
+
 readSamp :: Int -> IO [Sample];
-readSamp k = return $ take k $ repeat 0;
-{- For all natural numbers n, readSamp n equals n samples from the
- - microphone. -}
-{- Implementing readSamp is left as an exercise for the reader. -}
+readSamp k = readMicData >>= return . take k;
+{- For all natural numbers n, readSamp n equals n microphone samples. -}
 
 seqToPitch :: [Sample] -> Pitch;
-seqToPitch _ = 0;
+seqToPitch = fftToPitch . fft;
 {- For all [Sample] n, seqToPitch n equals the output of the sequence-
  - to-pitch function on the input n. -}
-{- Implementing the sequence-to-pitch function is left as an exercise
- - for the reader. -}
 
-calGraph :: [Pitch] -> Giraffe;
-calGraph x = zip [0..length x - 1] x;
-{- calGraph yields the coordinates of the graph. -}
+genCoords :: [Pitch] -> Giraffe;
+genCoords x = zip [0..length x - 1] x;
+{- genCoords yields the coordinates of the graph. -}
 
 genGraph :: Giraffe -> IO [Pitch];
 genGraph k = putStrLn "TODO: IMPLEMENT GRAPHING." >> return (map snd k);
@@ -32,8 +55,10 @@ genGraph k = putStrLn "TODO: IMPLEMENT GRAPHING." >> return (map snd k);
  - The author recommends using Chart or creating a custom library. -}
 
 mane :: [Double] -> IO ();
-mane k = readSamp windowSize >>=
-  genGraph . calGraph . (:k) . seqToPitch >>= mane;
+mane k = readSamp windowSize >>= doTheGraph >>= mane . take 50
+  where
+  doTheGraph = genGraph . genCoords . append k . seqToPitch
+  append a b = a ++ [b];
 
 main :: IO ();
 main = mane [];
