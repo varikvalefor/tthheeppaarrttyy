@@ -16,9 +16,15 @@ type Sample = Double;
 type Frequency = Double;
 type Multiplier = Double;
 type FFTOutput = [Complex Double];
+data X11Winda = ExerciseForTheReader;
 data WaveType = Sin | Cos;
 
 ------------------------------------------------------------------------
+
+createNewWinda :: IO X11Winda;
+createNewWinda = return ExerciseForTheReader;
+{- createNewWinda creates a new X11 window and returns the tag of this
+ - X11 window. -}
 
 fft :: [Sample] -> FFTOutput;
 fft = FT.fft . map cis;
@@ -49,16 +55,17 @@ genCoords :: [Pitch] -> Giraffe;
 genCoords x = zip [0..length x - 1] x;
 {- genCoords yields the coordinates of the graph. -}
 
-genGraph :: Giraffe -> IO [Pitch];
-genGraph k = putStrLn "TODO: IMPLEMENT GRAPHING." >> return (map snd k);
+genGraph :: X11Winda -> Giraffe -> IO [Pitch];
+genGraph w k = putStrLn "TODO: IMPLEMENT GRAPHING." >> return (map snd k);
 {- Implementing genGraph is left as an exercise for the reader.
  - The author recommends using Chart or creating a custom library. -}
 
-mane :: [Double] -> IO ();
-mane k = readSamp windowSize >>= doTheGraph >>= mane . take 50
+mane :: X11Winda -> [Double] -> IO ();
+mane w k = readSamp windowSize >>= doTheGraph w >>= loop w
   where
-  doTheGraph = genGraph . genCoords . append k . seqToPitch
-  append a b = a ++ [b];
+  doTheGraph a b = genGraph a (genCoords $ append k $ seqToPitch b)
+  append a b = a ++ [b]
+  loop a b = mane a (take 50 b);
 
 main :: IO ();
-main = mane [];
+main = createNewWinda >>= \winda -> mane winda [];
