@@ -10,7 +10,7 @@ windowSize = 65536;
 
 ------------------------------------------------------------------------
 
-type Giraffe = [(Int, Pitch)];
+type Giraffe = [(Int, Pitch)];  -- LIST OF GRAPH COORDINATES
 type Pitch = Double;
 type Sample = Double;
 type Frequency = Double;
